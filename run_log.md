@@ -9,8 +9,10 @@ retroactively at the end.
 
 | Checkpoint | Source URL | Date downloaded | SHA256 (optional) |
 |---|---|---|---|
-| depth_anything_v2_vits.pth | | | |
-| depth_anything_v1_vits.pth | | | |
+| depth_anything_v2_vits.pth | https://huggingface.co/depth-anything/Depth-Anything-V2-Small/resolve/main/depth_anything_v2_vits.pth | | |
+| depth_anything_v1_vits.pth | https://huggingface.co/spaces/LiheYoung/Depth-Anything/resolve/main/checkpoints/depth_anything_vits14.pth | | |
+
+(URLs filled in before the Colab run; fill in date + SHA256 once actually downloaded there.)
 
 ## Data licence/provenance check (DA-2K)
 
