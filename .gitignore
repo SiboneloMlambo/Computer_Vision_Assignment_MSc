@@ -1,0 +1,24 @@
+# Cloned authors' repo (re-cloned per environment_colab.md, not vendored here)
+external/
+
+# Large/binary artefacts -- never commit checkpoints, data, or results
+checkpoints/*
+!checkpoints/.gitkeep
+data/*
+!data/README.md
+results/*
+!results/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+.vscode/

@@ -1,0 +1,9 @@
+# Student-written evaluation code dependencies.
+# The model architecture itself needs the official repo's own requirements too
+# (see environment_colab.md) -- install both.
+torch>=2.0
+opencv-python-headless
+numpy
+tqdm
+matplotlib
+pytest
