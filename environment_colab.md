@@ -8,8 +8,11 @@ Colab session is enough (matches the proposal's feasibility claim).
 git clone https://github.com/SiboneloMlambo/Computer_Vision_Assignment_MSc.git depth-anything-v2-reproduction
 cd depth-anything-v2-reproduction
 
-# 2. Clone the authors' official repo for the model architecture + inference code
+# 2. Clone both official repos. Each checkpoint is loaded with its own
+#    release's architecture; strict loading prevents partial-weight runs.
+git clone https://github.com/LiheYoung/Depth-Anything.git external/Depth-Anything
 git clone https://github.com/DepthAnything/Depth-Anything-V2.git external/Depth-Anything-V2
+pip install -r external/Depth-Anything/requirements.txt
 pip install -r external/Depth-Anything-V2/requirements.txt
 
 # 3. Install this project's own (student-written evaluation code) dependencies
@@ -44,6 +47,7 @@ trusted.
 ```bash
 python -m src.smoke_test \
     --checkpoint checkpoints/depth_anything_v2_vits.pth \
+    --model-version v2 \
     --calibration-image data/da2k/<pick an image with an obvious near/far pair> \
     --near-hw <h> <w> --far-hw <h> <w>
 ```

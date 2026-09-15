@@ -109,9 +109,12 @@ def main():
         print(f"Smoke test: using {len(frames)} frames")
 
     all_results = {}
-    for version, ckpt in [("v1s", args.checkpoint_v1), ("v2s", args.checkpoint_v2)]:
+    for version, model_version, ckpt in [
+        ("v1s", "v1", args.checkpoint_v1),
+        ("v2s", "v2", args.checkpoint_v2),
+    ]:
         print(f"\n=== Evaluating {version} ({ckpt}) ===")
-        model = load_depth_anything_vits(ckpt)
+        model = load_depth_anything_vits(ckpt, model_version=model_version)
         results = evaluate_checkpoint(model, frames, input_size=args.input_size)
         all_results[version] = results
 

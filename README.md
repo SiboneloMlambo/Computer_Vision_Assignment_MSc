@@ -21,9 +21,9 @@ bottom of `src/decision_rule.py`, which is labelled as exactly that.
 
 ## What comes from the authors vs. what's student-written
 
-- **From the authors** (github.com/DepthAnything/Depth-Anything-V2):
-  model architecture, inference code (`infer_image`), released V1-S/V2-S
-  checkpoints.
+- **From the authors** (`LiheYoung/Depth-Anything` and
+  `DepthAnything/Depth-Anything-V2`): each release's matching model
+  architecture, inference code (`infer_image`), and released checkpoint.
 - **Student-written** (this repository): data loading (`src/da2k_dataset.py`,
   `src/diode_dataset.py`), the scale-and-shift alignment protocol
   (`src/alignment.py`), all metric implementations (`src/metrics.py`),
@@ -61,7 +61,7 @@ pytest tests/ -v          # 19/19 should pass -- see environment_colab.md
 ```
 
 Then follow `environment_colab.md` for the full Colab setup (cloning
-the official repo, downloading checkpoints/data, running both tracks,
+the two official repos, downloading checkpoints/data, running both tracks,
 and applying the decision rule).
 
 ## Status

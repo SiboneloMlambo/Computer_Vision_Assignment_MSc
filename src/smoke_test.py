@@ -25,6 +25,7 @@ from src.model_loader import infer_disparity, load_depth_anything_vits
 
 def calibrate_sign_convention(
     checkpoint_path: str,
+    model_version: str,
     image_path: str,
     near_hw: tuple[int, int],
     far_hw: tuple[int, int],
@@ -39,7 +40,7 @@ def calibrate_sign_convention(
     Print the result to run_log.md either way -- this single check is
     load-bearing for every DA-2K number the project produces.
     """
-    model = load_depth_anything_vits(checkpoint_path)
+    model = load_depth_anything_vits(checkpoint_path, model_version=model_version)
     raw_image = cv2.imread(image_path)
     if raw_image is None:
         raise FileNotFoundError(image_path)
@@ -65,13 +66,14 @@ def calibrate_sign_convention(
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", required=True)
+    parser.add_argument("--model-version", choices=("v1", "v2"), default="v2")
     parser.add_argument("--calibration-image", required=True)
     parser.add_argument("--near-hw", nargs=2, type=int, required=True, metavar=("H", "W"))
     parser.add_argument("--far-hw", nargs=2, type=int, required=True, metavar=("H", "W"))
     args = parser.parse_args()
 
     calibrate_sign_convention(
-        args.checkpoint, args.calibration_image,
+        args.checkpoint, args.model_version, args.calibration_image,
         tuple(args.near_hw), tuple(args.far_hw),
     )
 

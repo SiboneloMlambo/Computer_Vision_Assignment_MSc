@@ -140,21 +140,18 @@ def bootstrap_paired_difference(
     ci: float = 0.95,
     seed: int = 0,
 ) -> tuple[float, float, float]:
-    """Bootstrap CI for the difference in means between two *independent*
-    per-item arrays (e.g. V2-S DA-2K correctness vs V1-S DA-2K correctness,
-    resampled independently since they're evaluated on the same pairs but
-    treated here as two accuracy distributions to compare).
-    """
+    """Paired bootstrap CI for a mean difference on the same items."""
     values_a = np.asarray(values_a, dtype=np.float64)
     values_b = np.asarray(values_b, dtype=np.float64)
+    if values_a.shape != values_b.shape:
+        raise ValueError("Paired arrays must have the same shape.")
     rng = np.random.default_rng(seed)
 
     point = float(np.mean(values_a) - np.mean(values_b))
     diffs = np.empty(n_boot)
     for i in range(n_boot):
-        sa = rng.choice(values_a, size=len(values_a), replace=True)
-        sb = rng.choice(values_b, size=len(values_b), replace=True)
-        diffs[i] = np.mean(sa) - np.mean(sb)
+        indices = rng.integers(0, len(values_a), size=len(values_a))
+        diffs[i] = np.mean(values_a[indices] - values_b[indices])
 
     alpha = (1 - ci) / 2
     lower = float(np.quantile(diffs, alpha))
