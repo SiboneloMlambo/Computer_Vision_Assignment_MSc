@@ -12,6 +12,7 @@ from src.alignment import align_prediction, least_squares_scale_shift
 from src.decision_rule import DecisionInputs, Verdict, apply_decision_rule
 from src.metrics import (
     DA2KPairResult,
+    DiodeImageResult,
     abs_rel,
     bootstrap_ci,
     bootstrap_paired_difference,
@@ -20,6 +21,7 @@ from src.metrics import (
     da2k_pair_correct,
     delta1,
 )
+from src.run_track_a_diode import summarize_by_split
 
 
 # ---------------------------------------------------------------------------
@@ -84,6 +86,22 @@ def test_delta1_partial():
     pred = np.array([10.0, 20.0])  # second ratio = 2.0, fails threshold
     mask = np.ones(2, dtype=bool)
     assert delta1(pred, gt, mask) == pytest.approx(0.5)
+
+
+def test_summarize_by_split_reports_indoor_outdoor_and_combined():
+    results = [
+        DiodeImageResult("img1", abs_rel=0.1, delta1=0.9, n_valid_px=100, scale=1.0, shift=0.0, split="indoors"),
+        DiodeImageResult("img2", abs_rel=0.3, delta1=0.7, n_valid_px=100, scale=1.0, shift=0.0, split="indoors"),
+        DiodeImageResult("img3", abs_rel=0.5, delta1=0.5, n_valid_px=100, scale=1.0, shift=0.0, split="outdoor"),
+    ]
+    by_split = summarize_by_split(results)
+
+    assert set(by_split) == {"combined", "indoors", "outdoor"}
+    assert by_split["combined"]["n_images"] == 3
+    assert by_split["indoors"]["n_images"] == 2
+    assert by_split["outdoor"]["n_images"] == 1
+    assert by_split["indoors"]["abs_rel_mean"] == pytest.approx(0.2)
+    assert by_split["outdoor"]["abs_rel_mean"] == pytest.approx(0.5)
 
 
 # ---------------------------------------------------------------------------

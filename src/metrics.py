@@ -40,6 +40,7 @@ class DiodeImageResult:
     n_valid_px: int
     scale: float
     shift: float
+    split: str = "unknown"  # "indoors" or "outdoor"
 
 
 # ---------------------------------------------------------------------------

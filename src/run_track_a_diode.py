@@ -70,6 +70,7 @@ def evaluate_checkpoint(model, frames, input_size: int = 518) -> list[DiodeImage
                 n_valid_px=int(valid_after_align.sum()),
                 scale=s,
                 shift=t,
+                split=frame.split,
             )
         )
     return results
@@ -87,6 +88,21 @@ def summarize(results: list[DiodeImageResult]) -> dict:
         "delta1_mean": d1_point,
         "delta1_ci95": [d1_lo, d1_hi],
     }
+
+
+def summarize_by_split(results: list[DiodeImageResult]) -> dict:
+    """Indoor/outdoor/combined view of the same per-image results.
+
+    DIODE's val set is split into "indoors" and "outdoor" scenes; the
+    combined AbsRel/delta1 can mask a large gap between the two, so report
+    each split alongside the pooled ("combined") figure already produced
+    by `summarize`.
+    """
+    by_split = {"combined": summarize(results)}
+    for split in sorted(set(r.split for r in results)):
+        subset = [r for r in results if r.split == split]
+        by_split[split] = summarize(subset)
+    return by_split
 
 
 def main():
@@ -127,13 +143,31 @@ def main():
         with open(outdir / f"diode_summary_{version}.json", "w") as f:
             json.dump(summary, f, indent=2)
 
+        by_split = summarize_by_split(results)
+        print(f"\n--- {version} by split (indoor / outdoor / combined) ---")
+        print(json.dumps(by_split, indent=2))
+        with open(outdir / f"diode_summary_by_split_{version}.json", "w") as f:
+            json.dump(by_split, f, indent=2)
+
     v1_summary = summarize(all_results["v1s"])
     v2_summary = summarize(all_results["v2s"])
+    v1_by_split = summarize_by_split(all_results["v1s"])
+    v2_by_split = summarize_by_split(all_results["v2s"])
+    by_split_comparison = {
+        split: {
+            "delta_abs_rel": v2_by_split[split]["abs_rel_mean"] - v1_by_split[split]["abs_rel_mean"],
+            "delta_delta1": v2_by_split[split]["delta1_mean"] - v1_by_split[split]["delta1_mean"],
+            "v1s": v1_by_split[split],
+            "v2s": v2_by_split[split],
+        }
+        for split in v1_by_split
+    }
     comparison = {
         "delta_abs_rel": v2_summary["abs_rel_mean"] - v1_summary["abs_rel_mean"],
         "delta_delta1": v2_summary["delta1_mean"] - v1_summary["delta1_mean"],
         "v1s": v1_summary,
         "v2s": v2_summary,
+        "by_split": by_split_comparison,
     }
     with open(outdir / "diode_comparison.json", "w") as f:
         json.dump(comparison, f, indent=2)
